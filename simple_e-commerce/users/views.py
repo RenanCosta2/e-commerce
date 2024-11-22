@@ -1,3 +1,19 @@
-from django.shortcuts import render
+from rest_framework import viewsets, status
+from .serializers import UsersSerializer
+from .models import Users
+from rest_framework.response import Response
 
-# Create your views here.
+class UsersViewSet(viewsets.ModelViewSet):
+    queryset = Users.objects.all()
+    serializer_class = UsersSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            try:
+                user = serializer.save()
+                return Response({'message': 'User registered successfully!'}, status=status.HTTP_201_CREATED)
+            except:
+                return Response({'error': 'Error registering user: ' + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
