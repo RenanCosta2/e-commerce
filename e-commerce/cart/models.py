@@ -1,11 +1,13 @@
 from django.db import models
 from users.models import Users
 from products.models import Products
+from django.core.validators import MinValueValidator
 
-# Create your models here.
 class Carts(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     data_updated = models.DateTimeField(auto_now=True)
 
-class ItemCart(models.Model):
+class ItensCart(models.Model):
+    cart = models.ForeignKey(Carts, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1, validators=[MinValueValidator(0)])

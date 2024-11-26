@@ -3,11 +3,13 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from products.views import ProductsViewSet
 from users.views import UsersViewSet
+from cart.views import ItensCartViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 router = DefaultRouter()
 router.register(r'products', ProductsViewSet, basename='product')
 router.register(r'users', UsersViewSet, basename='user')
+router.register(r'cart', ItensCartViewSet, basename='cart')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
