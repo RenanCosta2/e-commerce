@@ -12,8 +12,7 @@ class ProductsViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action not in ['list', 'retrieve']:
-            # permission_classes = [IsSuperUser]
-            permission_classes = [AllowAny]
+            permission_classes = [IsSuperUser]
         else:
             permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
@@ -23,7 +22,7 @@ class ProductsViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             try:
                 product = serializer.save()
-                return Response({'message': 'Product registered successfully!'}, status=status.HTTP_201_CREATED)
+                return Response({'message': 'Product registered successfully.'}, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({'error': 'Error registering product: ' + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
