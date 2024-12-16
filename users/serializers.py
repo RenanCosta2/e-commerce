@@ -9,9 +9,17 @@ class UsersSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        password = validated_data.pop('password')
+        """
+        Custom `create` method to securely handle user password.
 
-        user = Users(**validated_data)
-        user.set_password(password)
-        user.save()
-        return user
+        Args:
+            validated_data (dict): Validated user data.
+
+        Returns:
+            Users: The created user instance with an encrypted password.
+        """
+        password = validated_data.pop('password')  # Extract password from input
+        user = Users(**validated_data)  # Create user instance with remaining data
+        user.set_password(password)  # Encrypt the password
+        user.save()  # Save the user to the database
+        return user  # Return the created user
