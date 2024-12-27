@@ -1,7 +1,9 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from .serializers import UsersSerializer
 from .models import Users
+from .permissions import IsAdminOrOwner
 from cart.models import Carts
 
 class UsersViewSet(viewsets.ModelViewSet):
@@ -14,6 +16,22 @@ class UsersViewSet(viewsets.ModelViewSet):
     """
     queryset = Users.objects.all()
     serializer_class = UsersSerializer
+
+    def get_permissions(self):
+        """
+        Override default permission logic.
+        
+        - The 'create' action is open to all users.
+        - The 'list' action is restricted to admins.
+        - Other actions (update, delete, get) are restricted to owners or admins.
+        """
+        if self.action == 'create':
+            permission_classes = [AllowAny]  # Open for all
+        elif self.action == 'list':
+            permission_classes = [IsAdminUser]  # Only admins can list users
+        else:
+            permission_classes = [IsAdminOrOwner, IsAuthenticated]  # Owners or admins for other actions
+        return [permission() for permission in permission_classes]
 
     def create(self, request, *args, **kwargs):
         """
