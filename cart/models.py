@@ -4,7 +4,7 @@ from products.models import Products
 from django.core.validators import MinValueValidator
 
 class Carts(models.Model):
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    user = models.OneToOneField(Users, on_delete=models.CASCADE)
     data_updated = models.DateTimeField(auto_now=True)
 
 class ItensCart(models.Model):
