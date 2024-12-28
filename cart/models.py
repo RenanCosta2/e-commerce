@@ -10,4 +10,4 @@ class Carts(models.Model):
 class ItensCart(models.Model):
     cart = models.ForeignKey(Carts, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1, validators=[MinValueValidator(0)])
+    quantity = models.IntegerField(default=1, validators=[MinValueValidator(1)])
