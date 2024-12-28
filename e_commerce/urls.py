@@ -3,14 +3,15 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from products.views import ProductsViewSet
 from users.views import UsersViewSet
-from cart.views import ItensCartViewSet
+from cart.views import CartViewSet, ItensCartViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 router = DefaultRouter()
 router.register(r'products', ProductsViewSet, basename='product')
 router.register(r'users', UsersViewSet, basename='user')
-router.register(r'cart', ItensCartViewSet, basename='cart')
+router.register(r'cart', CartViewSet, basename='cart')
+router.register(r'item-cart', ItensCartViewSet, basename='item-cart')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
