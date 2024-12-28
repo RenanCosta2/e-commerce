@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -70,7 +71,7 @@ class ItemCartTesteCase(TestCase):
         Test creation of an item cart
         """
         
-        url = reverse('cart-list')
+        url = reverse('item-cart-list')
         data = {
             "product": self.product2.id,
             "quantity": 1
@@ -84,7 +85,7 @@ class ItemCartTesteCase(TestCase):
         Test listing of items cart
         """
 
-        url = reverse('cart-list')
+        url = reverse('item-cart-list')
 
         response = self.client.get(url)
         
@@ -96,7 +97,7 @@ class ItemCartTesteCase(TestCase):
         Test retrieving an item cart
         """
 
-        url = reverse('cart-detail', kwargs={'pk': self.item1.id})
+        url = reverse('item-cart-detail', kwargs={'pk': self.item1.id})
 
         response = self.client.get(url)
         
@@ -108,7 +109,7 @@ class ItemCartTesteCase(TestCase):
         Test update of an item cart
         """
 
-        url = reverse('cart-detail', kwargs={'pk': self.item1.id})
+        url = reverse('item-cart-detail', kwargs={'pk': self.item1.id})
         data = {
                 "product": 2,
                 "quantity": 10
@@ -123,7 +124,7 @@ class ItemCartTesteCase(TestCase):
         Test partial update of an item cart
         """
 
-        url = reverse('cart-detail', kwargs={'pk': self.item1.id})
+        url = reverse('item-cart-detail', kwargs={'pk': self.item1.id})
         data = {
                 "quantity": 20
             }
@@ -137,7 +138,7 @@ class ItemCartTesteCase(TestCase):
         Test item cart deletion
         """
 
-        url = reverse('cart-detail', kwargs={'pk': self.item1.id})
+        url = reverse('item-cart-detail', kwargs={'pk': self.item1.id})
         
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -147,14 +148,30 @@ class ItemCartTesteCase(TestCase):
         Test reduce quantity of an item cart
         """
 
-        url = reverse('cart-reduce-quantity', kwargs={'pk': self.item1.id})
+        url = reverse('item-cart-reduce-quantity', kwargs={'pk': self.item1.id})
         
         response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(ItensCart.objects.filter(id=self.item1.id, quantity=3).exists())
 
-        for i in range(3):
+        for _ in range(3):
             response = self.client.patch(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(ItensCart.objects.filter(id=self.item1.id).exists())
+
+    def test_get_cart(self):
+        """
+        Test retrieving an item cart
+        """
+
+        url = reverse('cart-detail', kwargs={'pk': self.cart.id})
+
+        response = self.client.get(url)
+
+        precision = Decimal('0.01')
+        
+        total_amount = (self.item1.product.value * self.item1.quantity) +  (self.item2.product.value * self.item2.quantity)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Decimal(response.data['total']).quantize(precision), Decimal(total_amount).quantize(precision))
