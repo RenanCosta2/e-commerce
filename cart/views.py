@@ -46,19 +46,26 @@ class ItensCartViewSet(viewsets.ModelViewSet):
 
         Functionality:
         - Validates the incoming data using the serializer.
+        - Retrieves the authenticated user's cart.
         - Checks if the product already exists in the user's cart:
             - If it exists, increments the quantity of the product.
             - If it doesn't exist, adds a new item to the cart.
-        - Ensures proper error handling and returns appropriate responses.
+        - Ensures the requested quantity does not exceed the available stock.
+        - Handles unexpected errors gracefully and provides appropriate error messages.
 
         Steps:
         - Deserialize and validate the incoming data using the serializer.
-        - Retrieve the authenticated user's cart.
+        - Retrieve the cart associated with the authenticated user.
         - Check if the product already exists in the cart:
-            - If it exists, update the quantity and save the changes.
-            - If not, create a new item associated with the user's cart.
-        - Return a success response if the operation succeeds.
-        - Handle unexpected errors and return appropriate error messages.
+            - If it exists:
+                - Increment the product's quantity.
+                - Check if the updated quantity exceeds the available stock:
+                    - If yes, return an error response.
+                    - If no, save the updated quantity.
+            - If it doesn't exist:
+                - Create a new item associated with the user's cart.
+        - Return a success response upon successful operation.
+        - Handle and log unexpected errors during the process.
 
         Args:
             request: The HTTP request containing item data to be added to the cart.
@@ -66,7 +73,7 @@ class ItensCartViewSet(viewsets.ModelViewSet):
         Returns:
             Response: A JSON response with a success or error message.
                 - HTTP 201 (Created): If the item is successfully added or updated in the cart.
-                - HTTP 400 (Bad Request): If the serializer validation fails.
+                - HTTP 400 (Bad Request): If the serializer validation fails or the requested quantity exceeds the available stock.
                 - HTTP 500 (Internal Server Error): If an unexpected error occurs during the operation.
         """
         # Deserialize and validate the incoming data
@@ -83,6 +90,14 @@ class ItensCartViewSet(viewsets.ModelViewSet):
                 if product_in_cart:
                     # Increment the quantity if the product already exists in the cart
                     product_in_cart.quantity += serializer.validated_data['quantity']
+
+                    # Check if the updated quantity exceeds the available stock
+                    if product_in_cart.quantity > product.storage:
+                        return Response(
+                            {'error': 'Insufficient stock available for the requested quantity.'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+                    
                     product_in_cart.save()
                     return Response({'message': 'Item added successfully.'}, status=status.HTTP_201_CREATED)
 

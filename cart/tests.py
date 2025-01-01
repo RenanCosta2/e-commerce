@@ -79,6 +79,13 @@ class ItemCartTesteCase(TestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(ItensCart.objects.filter(product=self.product2).exists())
+
+        data = {
+            "product": self.product1.id,
+            "quantity": 51
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
     def test_list_item_cart(self):
         """
