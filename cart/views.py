@@ -3,7 +3,22 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from .models import Carts, ItensCart
-from .serializers import ItensCartSerializer
+from .serializers import ItensCartSerializer, CartsSerializers
+
+class CartViewSet(viewsets.mixins.RetrieveModelMixin, viewsets.mixins.ListModelMixin, viewsets.GenericViewSet):
+
+    queryset = Carts.objects.all()  # Queryset to fetch all ItemCart objects
+    serializer_class =  CartsSerializers # Serializer to handle ItemCart data
+    permission_classes = [IsAuthenticated]  # Restricts access to authenticated users only
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff:
+            return Carts.objects.all()
+        
+        return Carts.objects.filter(user=user)
+
 
 # ViewSet for managing items in the cart
 class ItensCartViewSet(viewsets.ModelViewSet):
