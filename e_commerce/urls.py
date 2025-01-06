@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from products.views import ProductsViewSet
-from users.views import UsersViewSet, AddressViewSet
+from users.views.address_views import AddressViewSet
+from users.views.user_views import UsersViewSet
 from cart.views import CartViewSet, ItensCartViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
