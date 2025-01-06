@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Users
+from .models import Users, Address
 
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,3 +23,11 @@ class UsersSerializer(serializers.ModelSerializer):
         user.set_password(password)  # Encrypt the password
         user.save()  # Save the user to the database
         return user  # Return the created user
+    
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = [
+            'id', 'user', 'street', 'city', 'state', 'zip_code', 'country', 'is_default'
+        ]
+        read_only_fields = ['user']
