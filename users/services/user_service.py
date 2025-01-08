@@ -18,7 +18,11 @@ class UserService:
             Users: The newly created user instance.
         """
         # Create the user instance
-        user = Users.objects.create(**data)
+        password = data.pop('password')
+        user = Users(**data)
+        user.set_password(password)
+        user.save()
+
         # Create a cart associated with the user
         Carts.objects.create(user=user)
         return user
