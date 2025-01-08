@@ -30,8 +30,36 @@ class ItemCart {
     - quantity: Integer
 }
 
+class Address {
+    - user: User
+    - street: String
+    - city: String
+    - state: String
+    - zip_code: String
+    - country: String
+    - is_default: Boolean
+}
+
+class Order {
+    - user: User
+    - address: Address
+    - total_value: Decimal
+    - status: String
+}
+
+class OrderItem {
+    - order: Order
+    - product: Product
+    - value: Decimal
+    - quantity: Integer
+}
+
 User "1" -- "1" Cart : owns
 Cart "1" -- "0..*" ItemCart : contains
 Product "1" -- "0..*" ItemCart : included_in
+User "1" -- "0..*" Address : owns
+Address "1" -- "0..*" Order : used_in
+Order "1" -- "0..*" OrderItem : contains
+Product "1" -- "0..*" OrderItem : included_in
 
 @enduml
