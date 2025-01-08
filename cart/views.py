@@ -87,6 +87,13 @@ class ItensCartViewSet(viewsets.ModelViewSet):
                 product = serializer.validated_data['product']
                 product_in_cart = ItensCart.objects.filter(cart=cart, product=product).first()
 
+                # Check if the quantity exceeds the available stock
+                if serializer.validated_data['quantity'] > product.storage:
+                    return Response(
+                        {'error': 'Insufficient stock available for the requested quantity.'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
                 if product_in_cart:
                     # Increment the quantity if the product already exists in the cart
                     product_in_cart.quantity += serializer.validated_data['quantity']
