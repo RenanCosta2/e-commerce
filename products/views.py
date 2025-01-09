@@ -2,8 +2,7 @@ from rest_framework import viewsets, status
 from .models import Products
 from .serializers import ProductsSerializer
 from rest_framework.response import Response
-from .permissions import IsSuperUser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.decorators import action
 
 # ViewSet to manage product-related CRUD operations
@@ -27,7 +26,7 @@ class ProductsViewSet(viewsets.ModelViewSet):
         - Other actions (create, update, delete) are restricted to superusers.
         """
         if self.action not in ['list', 'retrieve']:
-            permission_classes = [IsSuperUser]  # Custom permission for superusers
+            permission_classes = [IsAdminUser]  # Custom permission for admins
         else:
             permission_classes = [AllowAny]  # Open access for public endpoints
         return [permission() for permission in permission_classes]
