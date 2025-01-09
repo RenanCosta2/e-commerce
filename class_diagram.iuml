@@ -8,6 +8,9 @@ class Product {
     - storage: Integer
     - data_created: DateTime
     - data_updated: DateTime
+    + browse_products_by_category(category: String)
+    + browse_products_by_value(min_price: float, max_price: float)
+    + browse_products_by_name(name: String)
 }
 
 class User {
@@ -22,6 +25,7 @@ class User {
 class Cart {
     - user: User
     - data_updated: DateTime
+    + reduce_quantity()
 }
 
 class ItemCart {
@@ -38,6 +42,7 @@ class Address {
     - zip_code: String
     - country: String
     - is_default: Boolean
+    + set_as_default()
 }
 
 class Order {
