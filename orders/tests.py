@@ -72,8 +72,14 @@ class OrderTestCase(TestCase):
         
         response = self.client.post(url, data)
 
+        actual_storage = self.product1.storage
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)  # Verify that the status is 201 Created
         self.assertEqual(response.data['data']['items'][0]['product'], self.product1.id)  # Verify the correct product
+
+        # Check if the product's storage has been updated correctly after the order
+        product = Products.objects.filter(id=self.product1.id).first()
+        self.assertEqual(product.storage, actual_storage-self.item1.quantity) # Verify that the stock is reduced by the ordered quantity
 
     def test_list_order(self):
         """
