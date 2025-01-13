@@ -53,7 +53,7 @@ The e-commerce system aims to provide a platform where users can browse products
 
 ## 📋 Prerequisites
 
-- Python 3.x
+- Python 3.12
 - pip
 - virtualenv
 
